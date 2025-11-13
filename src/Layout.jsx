@@ -1,6 +1,6 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import logo from "./assets/images/Ten-truong-do-1000x159.png";
+import logo from "./assets/images/cellphones-logo.png";
 import "./assets/css/layout.css";
 
 const Layout = () => {
@@ -63,7 +63,7 @@ const Layout = () => {
 
       {/* --- FOOTER --- */}
       <footer className="modern-footer">
-        <p>© 2025 - StoreH | Thiết kế bởi Nguyễn Công Hảo</p>
+        <p>© 2025 | Trần Nhiệm Thu</p>
       </footer>
     </div>
   );
