@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 
 // --- CẤU HÌNH API ---
-const API_KEY = "AIzaSyDEIOTfJFro2tbg7RQCNKTZuUUQaGKzC5o"; // Key từ code Python của bạn
-const MODEL_NAME = "models/gemini-2.5-flash"; // Đã đổi sang 1.5 để ổn định (bạn có thể đổi lại 2.5)
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/${MODEL_NAME}:generateContent?key=${API_KEY}`;
+// 1. Dán Key bạn vừa tạo (tôi đã chép sẵn từ ảnh của bạn)
+const API_KEY = "AIzaSyDshoKE8b2MExmXQ1RjkwdlPoxeUKq3CTw";
+// 2. Tên Model chuẩn hiện nay (Đừng dùng 2.5, hãy dùng 1.5-flash)
+const MODEL_NAME = "gemini-1.5-flash";
+// 3. Đường dẫn API (Giữ nguyên logic này)
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
 
 interface Message {
   role: "user" | "bot";
@@ -101,7 +104,7 @@ const ChatPage = () => {
       <div style={styles.chatBox}>
         {/* Header */}
         <div style={styles.header}>
-          <h3>🤖 Chatbot HCE AI</h3>
+          <h3>🤖 Chatbot Cellphones AI</h3>
         </div>
 
         {/* Khu vực hiển thị tin nhắn */}

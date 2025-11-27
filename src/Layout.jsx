@@ -1,6 +1,6 @@
-import { Outlet, useNavigate, Link } from "react-router-dom"; // 1. Thêm import Link
+import { Outlet, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useCart } from "./CartContext"; // 2. Import Context để lấy số lượng
+import { useCart } from "./CartContext";
 import logo from "./assets/images/cellphones-logo.png";
 import "./assets/css/layout.css";
 
@@ -8,7 +8,6 @@ const Layout = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // 3. Lấy dữ liệu từ Giỏ hàng (Giả sử context trả về cartItems)
   const { cartItems } = useCart();
 
   // Tính tổng số lượng sản phẩm
@@ -35,12 +34,12 @@ const Layout = () => {
       {/* --- HEADER --- */}
       <header className="modern-header glass">
         <div className="header-left">
-          {/* Sửa a href thành Link to */}
           <Link to="/">
             <img src={logo} alt="Logo" className="header-logo" />
           </Link>
         </div>
 
+        {/* ✅ Đưa tất cả Link vào trong nav để thẳng hàng */}
         <nav className="header-nav">
           <Link to="/">Trang chủ</Link>
           <Link to="/trang1">Phụ Kiện</Link>
@@ -48,7 +47,10 @@ const Layout = () => {
           <Link to="/trang2">Trang Sinh Viên</Link>
           <Link to="/About">Giới Thiệu</Link>
 
-          {/* ✅ 4. PHẦN GIỎ HÀNG ĐÃ SỬA */}
+          {/* ✅ Sửa đường dẫn thành /chat cho khớp với App.js */}
+          <Link to="/chat">Chat với AI</Link>
+
+          {/* --- GIỎ HÀNG --- */}
           <Link
             to="/cart"
             className="cart-icon-container"
@@ -75,10 +77,7 @@ const Layout = () => {
               </span>
             )}
           </Link>
-          {/* ✅ KẾT THÚC PHẦN GIỎ HÀNG */}
         </nav>
-
-        <Link to="/ChatPage">Chat với AI</Link>
 
         <div className="header-right">
           {user ? (
