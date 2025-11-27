@@ -9,10 +9,13 @@ const Layout = () => {
   const navigate = useNavigate();
 
   // 3. Lấy dữ liệu từ Giỏ hàng (Giả sử context trả về cartItems)
-  const { cartItems } = useCart(); 
-  
+  const { cartItems } = useCart();
+
   // Tính tổng số lượng sản phẩm
-  const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const totalQuantity = cartItems.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -44,28 +47,38 @@ const Layout = () => {
           {user?.role === "admin" && <Link to="/admin/products">Quản trị</Link>}
           <Link to="/trang2">Trang Sinh Viên</Link>
           <Link to="/About">Giới Thiệu</Link>
-          
+
           {/* ✅ 4. PHẦN GIỎ HÀNG ĐÃ SỬA */}
-          <Link to="/cart" className="cart-icon-container" style={{ textDecoration: 'none', color: 'inherit', marginLeft: '15px' }}>
-             🛒 Giỏ hàng
-             {totalQuantity > 0 && (
-               <span
-                 style={{
-                   backgroundColor: "red",
-                   color: "white",
-                   borderRadius: "50%",
-                   padding: "2px 6px",
-                   fontSize: "12px",
-                   marginLeft: "5px",
-                   verticalAlign: "top"
-                 }}
-               >
-                 {totalQuantity}
-               </span>
-             )}
+          <Link
+            to="/cart"
+            className="cart-icon-container"
+            style={{
+              textDecoration: "none",
+              color: "inherit",
+              marginLeft: "15px",
+            }}
+          >
+            🛒 Giỏ hàng
+            {totalQuantity > 0 && (
+              <span
+                style={{
+                  backgroundColor: "red",
+                  color: "white",
+                  borderRadius: "50%",
+                  padding: "2px 6px",
+                  fontSize: "12px",
+                  marginLeft: "5px",
+                  verticalAlign: "top",
+                }}
+              >
+                {totalQuantity}
+              </span>
+            )}
           </Link>
           {/* ✅ KẾT THÚC PHẦN GIỎ HÀNG */}
         </nav>
+
+        <Link to="/ChatPage">Chat với AI</Link>
 
         <div className="header-right">
           {user ? (
