@@ -14,7 +14,8 @@ const Trang1 = () => {
     if (imagePath.startsWith("http")) return imagePath;
 
     // ⚠️ Đảm bảo tên bucket là 'img' hay 'products' đúng với Supabase của bạn
-    const BASE_URL = "https://gietauwhxqhqfhuhleto.supabase.co/storage/v1/object/public/img"; 
+    const BASE_URL =
+      "https://gietauwhxqhqfhuhleto.supabase.co/storage/v1/object/public/img";
     return `${BASE_URL}/${imagePath}`;
   };
 
@@ -26,7 +27,7 @@ const Trang1 = () => {
           .select("*")
           // ⚠️ QUAN TRỌNG: Chỉ lấy sản phẩm có category là 'accessories'
           // Bạn nhớ vào Database sửa cột category của sạc, ốp lưng thành 'accessories' nhé
-          .eq("category", "accessories"); 
+          .eq("category", "accessories");
 
         if (error) throw error;
         setProducts(data);
@@ -46,9 +47,11 @@ const Trang1 = () => {
   return (
     <div style={{ padding: "20px" }}>
       <h2 className="text-center mb-4">🔌 Phụ kiện chính hãng</h2>
-      
+
       {products.length === 0 ? (
-        <p style={{ textAlign: "center" }}>Đang tải hoặc chưa có phụ kiện nào...</p>
+        <p style={{ textAlign: "center" }}>
+          Đang tải hoặc chưa có phụ kiện nào...
+        </p>
       ) : (
         <div
           style={{
@@ -71,18 +74,31 @@ const Trang1 = () => {
                 background: "#fff",
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "space-between"
+                justifyContent: "space-between",
               }}
             >
               <div>
                 <img
                   src={getImageUrl(p.image)}
                   alt={p.title}
-                  style={{ height: "140px", width: "100%", objectFit: "contain" }}
-                  onError={(e) => e.target.src = "https://placehold.co/600x400?text=Error"}
+                  style={{
+                    height: "140px",
+                    width: "100%",
+                    objectFit: "contain",
+                  }}
+                  onError={(e) =>
+                    (e.target.src = "https://placehold.co/600x400?text=Error")
+                  }
                 />
-                <h4 style={{ fontSize: "16px", margin: "10px 0", height: "40px", overflow: "hidden" }}>
-                    {p.title || p.name}
+                <h4
+                  style={{
+                    fontSize: "16px",
+                    margin: "10px 0",
+                    height: "40px",
+                    overflow: "hidden",
+                  }}
+                >
+                  {p.title || p.name}
                 </h4>
                 <p style={{ color: "red", fontWeight: "bold" }}>${p.price}</p>
               </div>
@@ -97,10 +113,10 @@ const Trang1 = () => {
                   color: "#fff",
                   border: "none",
                   borderRadius: "4px",
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
               >
-                + Thêm vào giỏ
+                🛒 Thêm vào giỏ
               </button>
             </div>
           ))}
