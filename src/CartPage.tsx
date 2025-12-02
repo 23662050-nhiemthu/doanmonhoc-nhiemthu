@@ -1,7 +1,23 @@
 // src/CartPage.tsx
 import React from "react";
 import { useCart } from "./CartContext";
-import { useNavigate } from "react-router-dom"; // ✅ 1. Import useNavigate
+import { useNavigate } from "react-router-dom";
+// ⚠️ QUAN TRỌNG: Bạn cần import supabaseClient và định nghĩa getImageUrl
+// Tôi giả định bạn có thể lấy BASE_URL từ CartContext hoặc bạn cần định nghĩa nó ở đây.
+
+// --- HÀM XỬ LÝ ẢNH TỪ SUPABASE (Bạn cần thêm đoạn này) ---
+// Thay thế URL này bằng BASE_URL chính xác của Supabase Storage của bạn.
+const BASE_URL =
+  "https://gietauwhxqhqfhuhleto.supabase.co/storage/v1/object/public/img";
+
+const getImageUrl = (imagePath: string) => {
+  if (!imagePath) return "https://placehold.co/50x50?text=No+Image";
+  // Kiểm tra nếu imagePath đã là URL đầy đủ (ví dụ: từ API bên ngoài)
+  if (imagePath.startsWith("http")) return imagePath;
+
+  return `${BASE_URL}/${imagePath}`;
+};
+// ------------------------------------------------------------------
 
 export default function CartPage() {
   const {
@@ -12,14 +28,13 @@ export default function CartPage() {
     decreaseQuantity,
   } = useCart();
 
-  const navigate = useNavigate(); // ✅ 2. Khởi tạo navigate
+  const navigate = useNavigate();
 
   // --- TRƯỜNG HỢP GIỎ HÀNG TRỐNG ---
   if (cartItems.length === 0)
     return (
       <div style={{ textAlign: "center", marginTop: 50 }}>
         <h3 style={{ marginBottom: 20 }}>Giỏ hàng trống!</h3>
-        {/* ✅ Nút quay lại khi giỏ trống */}
         <button onClick={() => navigate("/")} style={styles.secondaryButton}>
           ⬅ Quay lại mua sắm
         </button>
@@ -35,15 +50,7 @@ export default function CartPage() {
         style={{ width: "100%", borderCollapse: "collapse", marginTop: 20 }}
         border={1}
       >
-        <thead>
-          <tr style={{ backgroundColor: "#f9f9f9" }}>
-            <th style={{ padding: 10 }}>Sản phẩm</th>
-            <th>Đơn giá</th>
-            <th>Số lượng</th>
-            <th>Thành tiền</th>
-            <th>Xóa</th>
-          </tr>
-        </thead>
+        <thead>{/* ... (phần head giữ nguyên) ... */}</thead>
         <tbody>
           {cartItems.map((item) => (
             <tr key={item.product.id}>
@@ -56,16 +63,24 @@ export default function CartPage() {
                 }}
               >
                 <img
-                  src={item.product.image}
+                  // ✅ ĐÃ SỬA: SỬ DỤNG HÀM getImageUrl
+                  src={getImageUrl(item.product.image)}
                   width={50}
                   height={50}
                   style={{ objectFit: "contain" }}
-                  alt=""
+                  alt={item.product.title || "Sản phẩm"} // Thêm alt text
+                  // Thêm xử lý lỗi nếu ảnh không tải được
+                  onError={(e) => {
+                    e.currentTarget.src =
+                      "https://placehold.co/50x50?text=Error";
+                  }}
                 />
                 <span style={{ fontWeight: 500 }}>{item.product.title}</span>
               </td>
+              {/* ... (các cột còn lại giữ nguyên) ... */}
               <td style={{ textAlign: "center" }}>${item.product.price}</td>
               <td style={{ textAlign: "center" }}>
+                {/* ... (Nút tăng giảm số lượng giữ nguyên) ... */}
                 <div
                   style={{
                     display: "flex",
@@ -120,23 +135,21 @@ export default function CartPage() {
         </tbody>
       </table>
 
-      {/* ✅ KHU VỰC ĐIỀU HƯỚNG & THANH TOÁN (FLEXBOX) */}
+      {/* ✅ KHU VỰC ĐIỀU HƯỚNG & THANH TOÁN */}
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between", // Đẩy 2 bên xa nhau
-          alignItems: "flex-end", // Căn đáy
+          justifyContent: "space-between",
+          alignItems: "flex-end",
           marginTop: 30,
           paddingTop: 20,
           borderTop: "1px solid #eee",
         }}
       >
-        {/* Nút Trở về (Bên trái) */}
         <button onClick={() => navigate("/")} style={styles.secondaryButton}>
           ⬅ Tiếp tục mua hàng
         </button>
 
-        {/* Tổng tiền & Thanh toán (Bên phải) */}
         <div style={{ textAlign: "right" }}>
           <h3 style={{ marginBottom: 15 }}>
             Tổng cộng:{" "}
@@ -151,8 +164,9 @@ export default function CartPage() {
   );
 }
 
-// --- CSS Inline Object cho gọn code ---
+// --- CSS Inline Object ---
 const styles = {
+  // ... (Giữ nguyên phần styles của bạn)
   qtyBtn: {
     width: 25,
     height: 25,
@@ -173,7 +187,7 @@ const styles = {
   },
   primaryButton: {
     padding: "12px 24px",
-    background: "#28a745", // Màu xanh lá chuẩn
+    background: "#28a745",
     color: "white",
     border: "none",
     borderRadius: "4px",

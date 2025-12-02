@@ -1,20 +1,31 @@
 import React, { useState, useRef, useEffect } from "react";
 
 // --- CẤU HÌNH API ---
-// 1. Dán Key bạn vừa tạo (tôi đã chép sẵn từ ảnh của bạn)
-const API_KEY = "AIzaSyDshoKE8b2MExmXQ1RjkwdlPoxeUKq3CTw";
-// 2. Tên Model chuẩn hiện nay (Đừng dùng 2.5, hãy dùng 1.5-flash)
+const API_KEY = "AIzaSyDshoKE8b2MExmXQ1RjkwdIPoxeUKq3CTw";
 const MODEL_NAME = "gemini-1.5-flash";
-// 3. Đường dẫn API (Giữ nguyên logic này)
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
 
+// ✅ SỬA LỖI 1: Thêm 'loading' vào các kiểu dữ liệu hợp lệ cho role
 interface Message {
-  role: "user" | "bot";
+  role: "user" | "bot" | "loading"; // Thêm "loading"
   text: string;
 }
 
+// Hàm chuyển đổi format tin nhắn của React sang format Content của Gemini API
+const formatMessagesForGemini = (messages: Message[]) => {
+  return (
+    messages
+      // Giữ lại logic lọc tin nhắn loading để không gửi nó lên API
+      .filter((msg) => msg.role !== "loading")
+      .map((msg) => ({
+        // Gemini dùng 'model' thay vì 'bot' cho phản hồi của AI
+        role: msg.role === "bot" ? "model" : "user",
+        parts: [{ text: msg.text }],
+      }))
+  );
+};
+
 const ChatPage = () => {
-  // Quản lý danh sách tin nhắn
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "bot",
@@ -22,11 +33,8 @@ const ChatPage = () => {
     },
   ]);
 
-  // Quản lý nội dung nhập và trạng thái loading
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  // Ref để tự động cuộn xuống cuối khi có tin nhắn mới
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -37,15 +45,16 @@ const ChatPage = () => {
     scrollToBottom();
   }, [messages]);
 
-  // --- LOGIC GỌI API (Tương đương class ChatService trong Python) ---
-  const sendMessageToGemini = async (userMessage: string) => {
+  // --- LOGIC GỌI API GEMINI (Đã cải tiến để gửi toàn bộ lịch sử) ---
+  const sendMessageToGemini = async (currentMessages: Message[]) => {
     try {
+      const historyContents = formatMessagesForGemini(currentMessages);
+
       const payload = {
-        contents: [
-          {
-            parts: [{ text: userMessage }],
-          },
-        ],
+        contents: historyContents,
+        config: {
+          temperature: 0.7,
+        },
       };
 
       const response = await fetch(API_URL, {
@@ -57,37 +66,66 @@ const ChatPage = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`Lỗi API: ${response.status} - ${response.statusText}`);
+        const errorBody = await response.json();
+        throw new Error(
+          `Lỗi API: ${response.status} - ${
+            errorBody.error.message || response.statusText
+          }`
+        );
       }
 
       const data = await response.json();
 
-      // Parse kết quả (Tương đương: data["candidates"][0]["content"]["parts"][0]["text"])
       const botReply =
         data.candidates?.[0]?.content?.parts?.[0]?.text || "Không có phản hồi.";
       return botReply;
+
+      // ✅ SỬA LỖI 2: Sử dụng instanceof hoặc kiểm tra typeof để xử lý lỗi
     } catch (error) {
       console.error("Error:", error);
-      return "❌ Xin lỗi, tôi đang gặp sự cố kết nối.";
+      let errorMessage = "Lỗi không xác định.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (
+        typeof error === "object" &&
+        error !== null &&
+        "message" in error
+      ) {
+        errorMessage = (error as any).message;
+      } else {
+        errorMessage = String(error);
+      }
+      return `❌ Xin lỗi, tôi đang gặp sự cố kết nối hoặc API. Chi tiết lỗi: ${errorMessage}`;
     }
   };
 
   // --- XỬ LÝ KHI NGƯỜI DÙNG GỬI TIN ---
   const handleSend = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || isLoading) return;
 
     const userText = input;
-    setInput(""); // Xóa ô nhập liệu
+    setInput("");
     setIsLoading(true);
 
-    // 1. Thêm tin nhắn người dùng vào list
-    setMessages((prev) => [...prev, { role: "user", text: userText }]);
+    const userMessage: Message = { role: "user", text: userText };
+    // 1. Tạo lịch sử mới: Thêm tin nhắn người dùng vào list
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
 
-    // 2. Gọi API lấy phản hồi
-    const botResponse = await sendMessageToGemini(userText);
+    // 2. Thêm tin nhắn Loading tạm thời vào UI (dù isLoading đã có)
+    setMessages((prev) => [
+      ...prev,
+      { role: "loading", text: "Đang suy nghĩ..." },
+    ]);
 
-    // 3. Thêm tin nhắn Bot vào list
-    setMessages((prev) => [...prev, { role: "bot", text: botResponse }]);
+    // 3. Gọi API với TOÀN BỘ lịch sử tin nhắn mới
+    const botResponse = await sendMessageToGemini(newMessages);
+
+    // 4. Xóa tin nhắn Loading và thêm tin nhắn Bot vào list
+    setMessages((prev) => {
+      const filteredPrev = prev.filter((msg) => msg.role !== "loading");
+      return [...filteredPrev, { role: "bot", text: botResponse }];
+    });
     setIsLoading(false);
   };
 
@@ -104,36 +142,42 @@ const ChatPage = () => {
       <div style={styles.chatBox}>
         {/* Header */}
         <div style={styles.header}>
-          <h3>🤖 Chatbot Cellphones AI</h3>
+          <h3>🤖 Chatbot Gemini AI</h3>
         </div>
 
         {/* Khu vực hiển thị tin nhắn */}
         <div style={styles.messageList}>
-          {messages.map((msg, index) => (
-            <div
-              key={index}
-              style={{
-                ...styles.messageRow,
-                justifyContent: msg.role === "user" ? "flex-end" : "flex-start",
-              }}
-            >
+          {messages
+            // Lọc tin nhắn "loading" tạm thời ra khỏi UI map để tránh bị lặp
+            .filter((msg) => msg.role !== "loading")
+            .map((msg, index) => (
               <div
+                key={index}
                 style={{
-                  ...styles.bubble,
-                  backgroundColor: msg.role === "user" ? "#007bff" : "#e9ecef",
-                  color: msg.role === "user" ? "#fff" : "#000",
+                  ...styles.messageRow,
+                  justifyContent:
+                    msg.role === "user" ? "flex-end" : "flex-start",
                 }}
               >
-                {/* Xử lý xuống dòng cho text */}
-                {msg.text.split("\n").map((line, i) => (
-                  <p key={i} style={{ margin: 0, minHeight: "1em" }}>
-                    {line}
-                  </p>
-                ))}
+                <div
+                  style={{
+                    ...styles.bubble,
+                    backgroundColor:
+                      msg.role === "user" ? "#007bff" : "#e9ecef",
+                    color: msg.role === "user" ? "#fff" : "#000",
+                  }}
+                >
+                  {/* Xử lý xuống dòng cho text */}
+                  {msg.text.split("\n").map((line, i) => (
+                    <p key={i} style={{ margin: 0, minHeight: "1em" }}>
+                      {line}
+                    </p>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
-          {/* Hiển thị loading khi đang chờ */}
+            ))}
+
+          {/* ✅ DÙNG isLoading để hiển thị trạng thái "Đang suy nghĩ..." */}
           {isLoading && (
             <div style={styles.messageRow}>
               <div
@@ -142,6 +186,7 @@ const ChatPage = () => {
                   backgroundColor: "#e9ecef",
                   fontStyle: "italic",
                   color: "#666",
+                  justifySelf: "flex-start",
                 }}
               >
                 Đang suy nghĩ...
@@ -180,6 +225,7 @@ const ChatPage = () => {
 
 // --- STYLES (CSS-in-JS) ---
 const styles = {
+  // ... (Giữ nguyên phần Styles của bạn)
   container: {
     display: "flex",
     justifyContent: "center",
