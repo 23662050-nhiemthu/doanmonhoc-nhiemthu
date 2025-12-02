@@ -29,7 +29,7 @@ const Trang2 = () => {
           .from("employees") // ⚠️ QUAN TRỌNG: Thay bằng tên bảng nhân viên của bạn (ví dụ: 'employees')
           .select("id, name, title, department, achievements, image") // Chọn các cột cần thiết
           .eq("is_honored", true) // ⚠️ Lọc: Chỉ lấy những người được vinh danh (Giả định có cột 'is_honored' = true)
-          .limit(4); // Giới hạn số lượng hiển thị (ví dụ 4 người)
+          .limit(6); // Giới hạn số lượng hiển thị (ví dụ 4 người)
 
         if (error) throw error;
 
@@ -116,7 +116,17 @@ const Trang2 = () => {
                   clipPath: "polygon(0 0, 100% 0, 100% 100%, 0% 100%)",
                 }}
               >
-                {index === 0 ? "TOP 1" : `Tháng ${new Date().getMonth() + 1}`}
+                {index === 0
+                  ? "TOP 1"
+                  : index === 1
+                  ? "TOP 2"
+                  : index === 2
+                  ? "TOP 3"
+                  : index === 3
+                  ? "TOP 4"
+                  : index === 4
+                  ? "TOP 5"
+                  : `Hạng ${index + 1}`}
               </div>
 
               {/* Ảnh nhân viên */}
