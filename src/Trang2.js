@@ -116,17 +116,7 @@ const Trang2 = () => {
                   clipPath: "polygon(0 0, 100% 0, 100% 100%, 0% 100%)",
                 }}
               >
-                {index === 0
-                  ? "TOP 1"
-                  : index === 1
-                  ? "TOP 2"
-                  : index === 2
-                  ? "TOP 3"
-                  : index === 3
-                  ? "TOP 4"
-                  : index === 4
-                  ? "TOP 5"
-                  : `Hạng ${index + 1}`}
+                {`Hạng ${index + 1}`}
               </div>
 
               {/* Ảnh nhân viên */}
