@@ -44,7 +44,7 @@ const Layout = () => {
           <Link to="/">Trang chủ</Link>
           <Link to="/trang1">Phụ Kiện</Link>
           {user?.role === "admin" && <Link to="/admin/products">Quản trị</Link>}
-          <Link to="/trang2">Trang Sinh Viên</Link>
+          <Link to="/trang2">Trang Nhân Viên</Link>
           <Link to="/About">Giới Thiệu</Link>
 
           {/* ✅ Sửa đường dẫn thành /chat cho khớp với App.js */}

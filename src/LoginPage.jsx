@@ -35,7 +35,7 @@ const LoginPage = () => {
 
       // 3. TRUY VẤN SUPABASE - ĐÃ XÓA TRUY VẤN tbl_roles để tránh lỗi
       const { data: userData, error } = await supabase
-        .from("tbl_user")
+        .from("user")
         .select(`id, username, password_hash, fullname, email`)
         .eq("username", username)
         .single();
