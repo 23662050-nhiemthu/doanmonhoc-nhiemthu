@@ -93,7 +93,7 @@ const ProductDetail = () => {
       <button
         onClick={() => navigate(-1)}
         style={{
-          backgroundColor: "#d70018",
+          backgroundColor: "#4CAF50",
           color: "#fff",
           border: "none",
           padding: "8px 14px",
