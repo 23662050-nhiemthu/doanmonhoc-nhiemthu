@@ -25,6 +25,8 @@ import LoginPage from "./LoginPage";
 //@ts-ignore
 import LogoutPage from "./LogoutPage";
 //@ts-ignore
+import RegisterPage from "./RegisterPage";
+//@ts-ignore
 import ProtectedRoute from "./ProtectedRoute";
 //@ts-ignore
 import ListProducts_SP_Admin from "./ListProducts_SP_Admin";
@@ -58,6 +60,7 @@ const App = () => {
             <Route path="About" element={<About />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="logout" element={<LogoutPage />} />
+            <Route path="/register" element={<RegisterPage />} />
             <Route
               path="admin/products"
               element={

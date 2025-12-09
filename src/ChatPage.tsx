@@ -51,10 +51,7 @@ const ChatPage = () => {
       const historyContents = formatMessagesForGemini(currentMessages);
 
       const payload = {
-        contents: historyContents,
-        config: {
-          temperature: 0.7,
-        },
+        contents: historyContents, // Chỉ cần gửi contents mà thôi
       };
 
       const response = await fetch(API_URL, {
@@ -79,8 +76,6 @@ const ChatPage = () => {
       const botReply =
         data.candidates?.[0]?.content?.parts?.[0]?.text || "Không có phản hồi.";
       return botReply;
-
-      // ✅ SỬA LỖI 2: Sử dụng instanceof hoặc kiểm tra typeof để xử lý lỗi
     } catch (error) {
       console.error("Error:", error);
       let errorMessage = "Lỗi không xác định.";

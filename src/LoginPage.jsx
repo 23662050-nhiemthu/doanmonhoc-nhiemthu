@@ -125,7 +125,7 @@ const LoginPage = () => {
         </form>
 
         <p className="register-link">
-          Bạn chưa có tài khoản? <a href="#">Tạo tài khoản mới</a>
+          Bạn chưa có tài khoản? <a href="/register">Tạo tài khoản mới</a>
         </p>
       </div>
     </div>
