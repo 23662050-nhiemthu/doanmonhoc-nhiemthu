@@ -82,7 +82,7 @@ const Layout = () => {
         <div className="header-right">
           {user ? (
             <div className="user-info">
-              <span className="user-name">👤 {user.username}</span>
+              <span className="user-name">🦅 {user.username}</span>
               <button className="logout-btn" onClick={handleLogout}>
                 Đăng xuất
               </button>
