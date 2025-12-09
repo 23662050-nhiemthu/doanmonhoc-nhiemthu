@@ -1,17 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "./supabaseClient";
+import { useCart } from "./CartContext"; // Import context giỏ hàng
+
+const STORAGE_URL =
+  "https://gietauwhxqhqfhuhleto.supabase.co/storage/v1/object/public/img/";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState(null);
   const navigate = useNavigate();
+
+  // Lấy hàm addToCart từ context giỏ hàng
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchProduct = async () => {
+      setLoading(true);
+      setErrorMsg(null);
+
       try {
         const { data, error } = await supabase
-          .from("product1")
+          .from("products")
           .select("*")
           .eq("id", id)
           .single();
@@ -19,20 +31,52 @@ const ProductDetail = () => {
         if (error) throw error;
         setProduct(data);
       } catch (err) {
-        console.error("Lỗi khi lấy dữ liệu sản phẩm:", err.message);
+        console.error("Lỗi:", err);
+        setErrorMsg(err.message || "Không tìm thấy sản phẩm");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchProduct();
   }, [id]);
 
-  if (!product) {
+  if (loading) {
     return (
       <div style={{ textAlign: "center", marginTop: "40px" }}>
-        <p>Đang tải thông tin sản phẩm...</p>
+        <p>⏳ Đang tải thông tin sản phẩm...</p>
       </div>
     );
   }
+
+  if (errorMsg) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "40px", color: "red" }}>
+        <h3>⚠️ Đã xảy ra lỗi!</h3>
+        <p>{errorMsg}</p>
+        <button onClick={() => navigate(-1)}>Quay lại</button>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "40px" }}>
+        Sản phẩm không tồn tại.
+      </div>
+    );
+  }
+
+  const imageUrl = product.image?.startsWith("http")
+    ? product.image
+    : `${STORAGE_URL}${product.image}`;
+
+  // Hàm xử lý thêm vào giỏ hàng
+  const handleAddToCart = (e) => {
+    e.stopPropagation(); // Chặn việc click nhầm sang trang chi tiết
+    addToCart(product); // Thêm sản phẩm vào giỏ
+    alert("Sản phẩm đã được thêm vào giỏ hàng!"); // Thông báo cho người dùng
+  };
 
   return (
     <div
@@ -49,7 +93,7 @@ const ProductDetail = () => {
       <button
         onClick={() => navigate(-1)}
         style={{
-          backgroundColor: "#007bff",
+          backgroundColor: "#d70018",
           color: "#fff",
           border: "none",
           padding: "8px 14px",
@@ -69,31 +113,26 @@ const ProductDetail = () => {
           alignItems: "flex-start",
         }}
       >
-        {/* Hình ảnh sản phẩm */}
         <div
           style={{
             flex: "1 1 300px",
             maxWidth: "400px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
             backgroundColor: "#f9f9f9",
             borderRadius: "10px",
             overflow: "hidden",
+            border: "1px solid #eee",
           }}
         >
           <img
-            src={product.image}
+            src={imageUrl}
             alt={product.title}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "contain",
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            onError={(e) => {
+              e.target.src = "https://via.placeholder.com/400?text=No+Image";
             }}
           />
         </div>
 
-        {/* Thông tin chi tiết */}
         <div style={{ flex: "1 1 300px" }}>
           <h2 style={{ marginBottom: "10px" }}>{product.title}</h2>
           <p
@@ -101,11 +140,9 @@ const ProductDetail = () => {
           >
             ${product.price}
           </p>
-
           <p style={{ marginTop: "10px", color: "#555" }}>
             ⭐ {product.rating_rate} ({product.rating_count} đánh giá)
           </p>
-
           <p
             style={{
               marginTop: "20px",
@@ -119,15 +156,17 @@ const ProductDetail = () => {
 
           <button
             style={{
-              marginTop: "20px",
-              backgroundColor: "#28a745",
-              color: "#fff",
-              border: "none",
-              padding: "10px 16px",
-              borderRadius: "6px",
-              cursor: "pointer",
+              marginTop: "10px",
+              width: "100%",
+              padding: "8px", // Cùng padding với nút Mua Hàng
+              backgroundColor: "#d70018", // Màu nền giống nút Mua Hàng
+              color: "white", // Chữ màu trắng
+              border: "none", // Không có viền
+              borderRadius: "5px", // Góc bo tròn giống nút Mua Hàng
+              cursor: "pointer", // Con trỏ dạng tay khi hover
+              fontWeight: "bold", // Chữ đậm
             }}
-            onClick={() => alert("Đã thêm vào giỏ hàng!")}
+            onClick={handleAddToCart} // Thêm sản phẩm vào giỏ hàng khi nhấn nút
           >
             🛒 Thêm vào giỏ hàng
           </button>
