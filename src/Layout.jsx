@@ -39,15 +39,12 @@ const Layout = () => {
           </Link>
         </div>
 
-        {/* ✅ Đưa tất cả Link vào trong nav để thẳng hàng */}
         <nav className="header-nav">
           <Link to="/">Trang chủ</Link>
           <Link to="/trang1">Phụ Kiện</Link>
           {user?.role === "admin" && <Link to="/admin/products">Quản trị</Link>}
           <Link to="/trang2">Trang Nhân Viên</Link>
           <Link to="/About">Giới Thiệu</Link>
-
-          {/* ✅ Sửa đường dẫn thành /chat cho khớp với App.js */}
           <Link to="/chat">Chat với AI</Link>
 
           {/* --- GIỎ HÀNG --- */}
@@ -102,9 +99,47 @@ const Layout = () => {
         </div>
       </main>
 
-      {/* --- FOOTER --- */}
+      {/* --- FOOTER MỚI --- */}
       <footer className="modern-footer">
-        <p>© 2025 | Trần Nhiệm Thu</p>
+        <div className="footer-container">
+          
+          {/* Cột 1: Thông tin liên hệ */}
+          <div className="footer-column">
+            <h3>Liên Hệ</h3>
+            <p>📍 Địa chỉ: 33 Vĩnh Viễn, Phường Vườn Lài, TP.HCM</p>
+            <p>📧 Email: support@cellphones.com</p>
+            <p>📞 Hotline: 1800.2097</p>
+            
+            <div className="social-links">
+              {/* Bạn có thể thay bằng icon nếu có cài FontAwesome */}
+              <a href="https://facebook.com" target="_blank" rel="noreferrer" className="social-btn facebook">
+                Facebook
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="social-btn instagram">
+                Instagram
+              </a>
+            </div>
+          </div>
+
+          {/* Cột 2: Bản đồ */}
+          <div className="footer-column map-column">
+            <h3>Bản Đồ</h3>
+            <iframe 
+              title="Google Map"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.4946681007846!2d106.69932291533418!3d10.773374262204593!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f40a3b49e59%3A0xa1bd14565e63e419!2sHo%20Chi%20Minh%20City!5e0!3m2!1sen!2s!4v1634567890123!5m2!1sen!2s" 
+              width="100%" 
+              height="200" 
+              style={{border:0, borderRadius: "8px"}} 
+              allowFullScreen="" 
+              loading="lazy">
+            </iframe>
+          </div>
+
+        </div>
+        
+        <div className="footer-bottom">
+          <p>© 2025 | Trần Nhiệm Thu - 23662050</p>
+        </div>
       </footer>
     </div>
   );

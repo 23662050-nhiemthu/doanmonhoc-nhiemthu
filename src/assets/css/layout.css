@@ -1,4 +1,4 @@
-/* 🎨 Modern Layout 2025 */
+/* 🎨 Modern Layout 2025 - Updated Footer */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 
 :root {
@@ -9,6 +9,10 @@
   --border: #e0e0e0;
   --glass-bg: rgba(255, 255, 255, 0.75);
   --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  /* Màu riêng cho Footer */
+  --footer-bg: #222;
+  --footer-text: #ccc;
+  --footer-accent: #d70018; /* Màu đỏ nhấn giống CellphoneS */
 }
 
 body {
@@ -147,14 +151,95 @@ body {
   animation: fadeInUp 0.5s ease;
 }
 
-/* ---- FOOTER ---- */
+/* =========================================
+   ---- NEW FOOTER STYLES (CẬP NHẬT) ---- 
+   ========================================= */
 .modern-footer {
-  background: #fff;
+  background-color: var(--footer-bg);
+  color: #fff;
+  padding: 50px 20px 20px;
+  margin-top: auto;
+  border-top: 4px solid var(--footer-accent);
+}
+
+.footer-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 40px;
+}
+
+.footer-column {
+  flex: 1;
+  min-width: 300px;
+}
+
+.footer-column h3 {
+  font-size: 1.1rem;
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #fff; 
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--footer-accent);
+  display: inline-block;
+  padding-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.footer-column p {
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  color: var(--footer-text);
+  line-height: 1.6;
+}
+
+/* Social Buttons */
+.social-links {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.social-btn {
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: white;
+  transition: transform 0.2s, opacity 0.2s;
+  display: inline-block;
+}
+
+.social-btn.facebook {
+  background-color: #3b5998;
+}
+
+.social-btn.instagram {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+
+.social-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* Map Style */
+.map-column iframe {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  background: #333; /* Loading placeholder color */
+}
+
+/* Copyright */
+.footer-bottom {
   text-align: center;
-  padding: 16px 0;
-  border-top: 1px solid var(--border);
-  font-size: 14px;
-  color: #777;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #444;
+  font-size: 0.85rem;
+  color: #888;
 }
 
 /* ---- EFFECTS ---- */
@@ -181,6 +266,7 @@ body {
 
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
+  /* Header adjustments */
   .header-nav {
     display: none;
   }
@@ -195,5 +281,15 @@ body {
   .page-container {
     margin: 10px;
     padding: 30px;
+  }
+
+  /* Footer adjustments */
+  .footer-container {
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .footer-column {
+    min-width: 100%;
   }
 }
