@@ -1,24 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "./supabaseClient";
-import "bootstrap/dist/css/bootstrap.min.css";
+import { useNavigate } from "react-router-dom";
 
 const ListProducts_SP_Admin = () => {
   const [products, setProducts] = useState([]);
-  const [editingProduct, setEditingProduct] = useState(null);
-  const [newProduct, setNewProduct] = useState({
-    title: "",
-    price: "",
-    image: "",
-    rating_rate: "",
-    rating_count: "",
-  });
+  const navigate = useNavigate();
 
+  // --- 1. Hàm lấy link ảnh từ Supabase ---
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return "https://placehold.co/100x100?text=No+Image";
+    if (imagePath.startsWith("http")) return imagePath; // Nếu là link ảnh mạng
+    // Link bucket 'img' của bạn
+    const BASE_URL =
+      "https://gietauwhxqhqfhuhleto.supabase.co/storage/v1/object/public/img";
+    return `${BASE_URL}/${imagePath}`;
+  };
+
+  // --- 2. Hàm tải danh sách sản phẩm ---
   const fetchProducts = async () => {
     const { data, error } = await supabase
-      .from("product1")
+      .from("products") // Tên bảng của bạn
       .select("*")
-      .order("id", { ascending: true });
-    if (error) console.error("Lỗi khi tải sản phẩm:", error.message);
+      .order("id", { ascending: true }); // Sắp xếp theo ID tăng dần
+
+    if (error) console.error("Lỗi tải dữ liệu:", error.message);
     else setProducts(data);
   };
 
@@ -26,199 +31,170 @@ const ListProducts_SP_Admin = () => {
     fetchProducts();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (editingProduct) {
-      setEditingProduct({ ...editingProduct, [name]: value });
-    } else {
-      setNewProduct({ ...newProduct, [name]: value });
-    }
-  };
-
-  const handleAdd = async (e) => {
-    e.preventDefault();
-    const { error } = await supabase.from("product1").insert([newProduct]);
-    if (error) alert("❌ Lỗi khi thêm sản phẩm: " + error.message);
-    else {
-      alert("✅ Thêm sản phẩm thành công!");
-      setNewProduct({
-        title: "",
-        price: "",
-        image: "",
-        rating_rate: "",
-        rating_count: "",
-      });
-      fetchProducts();
-    }
-  };
-
-  const handleEdit = async (e) => {
-    e.preventDefault();
-    const { id, ...updated } = editingProduct;
-    const { error } = await supabase
-      .from("product1")
-      .update(updated)
-      .eq("id", id);
-    if (error) alert("❌ Lỗi khi cập nhật sản phẩm: " + error.message);
-    else {
-      alert("✅ Cập nhật sản phẩm thành công!");
-      setEditingProduct(null);
-      fetchProducts();
-    }
-  };
-
+  // --- 3. Hàm Xóa (Quan trọng) ---
   const handleDelete = async (id) => {
-    if (window.confirm("Bạn có chắc muốn xóa sản phẩm này không?")) {
-      const { error } = await supabase.from("product1").delete().eq("id", id);
-      if (error) alert("❌ Lỗi khi xóa sản phẩm: " + error.message);
-      else {
-        alert("🗑️ Đã xóa sản phẩm!");
-        fetchProducts();
+    // Hỏi xác nhận trước khi xóa để tránh lỡ tay
+    if (window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
+      const { error } = await supabase.from("products").delete().eq("id", id);
+
+      if (error) {
+        alert("Lỗi khi xóa: " + error.message);
+      } else {
+        alert("Đã xóa sản phẩm thành công!");
+        fetchProducts(); // Tải lại danh sách ngay lập tức để thấy thay đổi
       }
     }
   };
 
   return (
-    <div className="container py-5">
-      <h2 className="text-center mb-5 text-primary">
-        🛠️ Quản lý sản phẩm (Admin)
-      </h2>
-
-      {/* Form thêm/sửa sản phẩm */}
-      <div className="card mb-5 shadow-sm">
-        <div className="card-body">
-          <h5 className="card-title">
-            {editingProduct ? "✏️ Chỉnh sửa sản phẩm" : "➕ Thêm sản phẩm mới"}
-          </h5>
-          <form onSubmit={editingProduct ? handleEdit : handleAdd}>
-            <div className="row g-3">
-              <div className="col-md-6">
-                <input
-                  type="text"
-                  name="title"
-                  className="form-control"
-                  placeholder="Tên sản phẩm"
-                  value={
-                    editingProduct ? editingProduct.title : newProduct.title
-                  }
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="col-md-6">
-                <input
-                  type="number"
-                  name="price"
-                  className="form-control"
-                  placeholder="Giá"
-                  value={
-                    editingProduct ? editingProduct.price : newProduct.price
-                  }
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="col-12">
-                <input
-                  type="text"
-                  name="image"
-                  className="form-control"
-                  placeholder="URL hình ảnh"
-                  value={
-                    editingProduct ? editingProduct.image : newProduct.image
-                  }
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="col-md-6">
-                <input
-                  type="number"
-                  step="0.1"
-                  name="rating_rate"
-                  className="form-control"
-                  placeholder="Đánh giá (0–5)"
-                  value={
-                    editingProduct
-                      ? editingProduct.rating_rate
-                      : newProduct.rating_rate
-                  }
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="col-md-6">
-                <input
-                  type="number"
-                  name="rating_count"
-                  className="form-control"
-                  placeholder="Số lượt đánh giá"
-                  value={
-                    editingProduct
-                      ? editingProduct.rating_count
-                      : newProduct.rating_count
-                  }
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-
-            <div className="mt-3 text-end">
-              {editingProduct && (
-                <button
-                  type="button"
-                  onClick={() => setEditingProduct(null)}
-                  className="btn btn-secondary me-2"
-                >
-                  Hủy
-                </button>
-              )}
-              <button type="submit" className="btn btn-primary">
-                {editingProduct ? "Lưu thay đổi" : "Thêm sản phẩm"}
-              </button>
-            </div>
-          </form>
-        </div>
+    <div className="container mt-4" style={{ padding: "20px" }}>
+      {/* Header và nút Thêm mới */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2>Quản lý sản phẩm (Admin)</h2>
+        <button
+          className="btn btn-success"
+          onClick={() => navigate("/admin/edit/new")} // Chuyển sang trang thêm mới
+          style={{
+            backgroundColor: "#28a745",
+            color: "white",
+            padding: "10px 20px",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          ➕ Thêm mới
+        </button>
       </div>
 
-      {/* Danh sách sản phẩm dạng Grid */}
-      <div className="row g-4">
-        {products.map((p) => (
-          <div key={p.id} className="col-12 col-sm-6 col-md-4 col-lg-3">
-            <div className="card h-100 shadow-sm">
-              <img
-                src={p.image}
-                alt={p.title}
-                className="card-img-top"
-                style={{
-                  width: "150px",
-                  height: "150px",
-                  objectFit: "cover",
-                  margin: "10px auto 0",
-                }}
-              />
-              <div className="card-body d-flex flex-column">
-                <h6 className="card-title text-truncate">{p.title}</h6>
-                <p className="text-danger fw-bold mb-1">${p.price}</p>
-                <p className="text-muted mb-3">
-                  ⭐ {p.rating_rate} ({p.rating_count})
-                </p>
-                <div className="mt-auto d-flex justify-content-end gap-2">
-                  <button
-                    onClick={() => setEditingProduct(p)}
-                    className="btn btn-warning btn-sm"
+      {/* Bảng danh sách */}
+      <div className="table-responsive">
+        <table
+          className="table table-bordered"
+          style={{ width: "100%", borderCollapse: "collapse" }}
+        >
+          <thead style={{ backgroundColor: "#f8f9fa" }}>
+            <tr>
+              <th style={{ padding: "12px", border: "1px solid #dee2e6" }}>
+                Hình ảnh
+              </th>
+              <th style={{ padding: "12px", border: "1px solid #dee2e6" }}>
+                Tên
+              </th>
+              <th style={{ padding: "12px", border: "1px solid #dee2e6" }}>
+                Giá
+              </th>
+              <th style={{ padding: "12px", border: "1px solid #dee2e6" }}>
+                Đánh giá
+              </th>
+              <th style={{ padding: "12px", border: "1px solid #dee2e6" }}>
+                Thao tác
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.length === 0 ? (
+              <tr>
+                <td colSpan="5" className="text-center p-3">
+                  Đang tải dữ liệu...
+                </td>
+              </tr>
+            ) : (
+              products.map((p) => (
+                <tr key={p.id}>
+                  {/* Cột Hình ảnh */}
+                  <td
+                    style={{
+                      width: "100px",
+                      textAlign: "center",
+                      border: "1px solid #dee2e6",
+                    }}
                   >
-                    Sửa
-                  </button>
-                  <button
-                    onClick={() => handleDelete(p.id)}
-                    className="btn btn-danger btn-sm"
+                    <img
+                      src={getImageUrl(p.image)}
+                      alt={p.title}
+                      style={{
+                        width: "80px",
+                        height: "80px",
+                        objectFit: "contain",
+                        borderRadius: "4px",
+                      }}
+                    />
+                  </td>
+
+                  {/* Cột Tên */}
+                  <td
+                    style={{
+                      border: "1px solid #dee2e6",
+                      verticalAlign: "middle",
+                    }}
                   >
-                    Xóa
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
+                    {p.title || p.name}
+                  </td>
+
+                  {/* Cột Giá */}
+                  <td
+                    style={{
+                      border: "1px solid #dee2e6",
+                      verticalAlign: "middle",
+                      fontWeight: "bold",
+                      color: "#d70018",
+                    }}
+                  >
+                    {Number(p.price).toLocaleString("vi-VN")} đ
+                  </td>
+
+                  {/* Cột Đánh giá */}
+                  <td
+                    style={{
+                      border: "1px solid #dee2e6",
+                      verticalAlign: "middle",
+                    }}
+                  >
+                    ⭐ {p.rating_rate || 5} ({p.rating_count || 100})
+                  </td>
+
+                  {/* Cột Thao tác: Sửa & Xóa */}
+                  <td
+                    style={{
+                      border: "1px solid #dee2e6",
+                      verticalAlign: "middle",
+                      width: "160px",
+                      textAlign: "center",
+                    }}
+                  >
+                    <button
+                      onClick={() => navigate(`/admin/edit/${p.id}`)} // Chuyển sang trang Sửa với ID
+                      style={{
+                        backgroundColor: "#ffc107",
+                        border: "none",
+                        padding: "6px 12px",
+                        marginRight: "8px",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Sửa
+                    </button>
+                    <button
+                      onClick={() => handleDelete(p.id)} // Gọi hàm xóa
+                      style={{
+                        backgroundColor: "#dc3545",
+                        color: "white",
+                        border: "none",
+                        padding: "6px 12px",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Xóa
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );

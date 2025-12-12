@@ -31,28 +31,22 @@ import ProtectedRoute from "./ProtectedRoute";
 //@ts-ignore
 import ListProducts_SP_Admin from "./ListProducts_SP_Admin";
 
-import ChatPage from "./ChatPage"; // ✅ Import trang Chat
+//@ts-ignore
+import AdminEditProduct from "./AdminEditProduct";
 
-// --- IMPORT MỚI CHO GIỎ HÀNG ---
-import { CartProvider } from "./CartContext"; // Context vừa sửa ở Bước 1
-import CartPage from "./CartPage"; // Trang hiển thị giỏ hàng (Xem bước 3)
+import ChatPage from "./ChatPage";
+import { CartProvider } from "./CartContext";
+import CartPage from "./CartPage";
 
 const App = () => {
-  //return <Layout />;
   return (
-    // ✅ 1. Bọc Provider ở ngoài cùng để state giỏ hàng sống toàn app
     <CartProvider>
       <BrowserRouter>
         <Routes>
-          {/* ✅ Layout chung cho toàn bộ hệ thống */}
           <Route path="/" element={<Layout />}>
-            {/* Trang chính (cho người dùng vãng lai) */}
             <Route index element={<ListProducts_SP />} />
-
-            {/* ✅ 2. Thêm Route cho Giỏ Hàng */}
             <Route path="cart" element={<CartPage />} />
             <Route path="chat" element={<ChatPage />} />
-
             <Route path="trang1" element={<Trang1 />} />
             <Route path="trang2" element={<Trang2 />} />
             <Route path="sanpham/:id" element={<Chitietsanpham />} />
@@ -61,11 +55,23 @@ const App = () => {
             <Route path="login" element={<LoginPage />} />
             <Route path="logout" element={<LogoutPage />} />
             <Route path="/register" element={<RegisterPage />} />
+
+            {/* KHU VỰC ADMIN */}
             <Route
               path="admin/products"
               element={
                 <ProtectedRoute>
                   <ListProducts_SP_Admin />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* ✅ MỚI: Route cho trang Thêm/Sửa (nằm trong ProtectedRoute luôn để bảo mật) */}
+            <Route
+              path="admin/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <AdminEditProduct />
                 </ProtectedRoute>
               }
             />
