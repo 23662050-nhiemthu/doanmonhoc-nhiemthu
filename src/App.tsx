@@ -23,11 +23,18 @@ import LogoutPage from "./LogoutPage";
 import RegisterPage from "./RegisterPage";
 //@ts-ignore
 import ProtectedRoute from "./ProtectedRoute";
+
+// --- CÁC TRANG ADMIN ---
 //@ts-ignore
 import ListProducts_SP_Admin from "./ListProducts_SP_Admin";
-
 //@ts-ignore
 import AdminEditProduct from "./AdminEditProduct";
+// @ts-ignore
+import UserManagement from "./UserManagement";
+// @ts-ignore
+import AdminDashboard from "./AdminDashboard";
+// @ts-ignore
+import AdminEditUser from "./AdminEditUser"; // ✅ MỚI: Import trang sửa user
 
 import ChatPage from "./ChatPage";
 import { CartProvider } from "./CartContext";
@@ -41,6 +48,7 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>
+            {/* --- KHU VỰC KHÁCH HÀNG --- */}
             <Route index element={<ListProducts_SP />} />
             <Route path="cart" element={<CartPage />} />
             <Route path="chat" element={<ChatPage />} />
@@ -53,7 +61,19 @@ const App = () => {
             <Route path="logout" element={<LogoutPage />} />
             <Route path="/register" element={<RegisterPage />} />
 
-            {/* KHU VỰC ADMIN */}
+            {/* --- KHU VỰC ADMIN (Đã được bảo vệ) --- */}
+
+            {/* 1. Trang chủ Admin (Dashboard) */}
+            <Route
+              path="admin/dashboard"
+              element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* 2. Quản lý Sản phẩm */}
             <Route
               path="admin/products"
               element={
@@ -62,13 +82,31 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-
-            {/* ✅ MỚI: Route cho trang Thêm/Sửa (nằm trong ProtectedRoute luôn để bảo mật) */}
+            {/* Thêm/Sửa Sản phẩm */}
             <Route
               path="admin/edit/:id"
               element={
                 <ProtectedRoute>
                   <AdminEditProduct />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* 3. Quản lý Người dùng */}
+            <Route
+              path="admin/user"
+              element={
+                <ProtectedRoute>
+                  <UserManagement />
+                </ProtectedRoute>
+              }
+            />
+            {/* ✅ MỚI: Sửa Người dùng */}
+            <Route
+              path="admin/user/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <AdminEditUser />
                 </ProtectedRoute>
               }
             />

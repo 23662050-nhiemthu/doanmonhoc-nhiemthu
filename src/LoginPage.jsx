@@ -18,9 +18,9 @@ const sha256 = async (text) => {
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // <--- State hiển thị mật khẩu
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate(); // Không cần dùng navigate nữa vì ta dùng window.location
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -35,7 +35,7 @@ const LoginPage = () => {
 
       const { data: userData, error } = await supabase
         .from("user")
-        .select(`id, username, password_hash, fullname, email`)
+        .select(`id, username, password_hash, fullname, email, role`)
         .eq("username", username)
         .single();
 
@@ -55,21 +55,28 @@ const LoginPage = () => {
         return;
       }
 
-      const role = userData.username === "admin" ? "admin" : "user";
+      const role = userData.role || "customer";
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          id: userData.id,
-          username: userData.username,
-          fullname: userData.fullname,
-          role,
-        })
-      );
+      const userInfo = {
+        id: userData.id,
+        username: userData.username,
+        fullname: userData.fullname,
+        role: role,
+      };
+
+      // Lưu cả 2 key cho chắc chắn
+      localStorage.setItem("user", JSON.stringify(userInfo));
+      localStorage.setItem("user_token", JSON.stringify(userInfo));
 
       alert(`✅ Đăng nhập thành công! Xin chào ${userData.fullname}`);
-      navigate("/");
-      window.location.reload();
+
+      // ✅ SỬA Ở ĐÂY: Dùng window.location.href CHO CẢ 2 TRƯỜNG HỢP
+      // Điều này bắt buộc trình duyệt tải lại trang -> Header sẽ cập nhật tên ngay lập tức
+      if (role === "admin") {
+        window.location.href = "/admin/dashboard";
+      } else {
+        window.location.href = "/";
+      }
     } catch (err) {
       console.error(err);
       alert(`⚠️ Lỗi hệ thống: ${err.message}`);
@@ -125,19 +132,18 @@ const LoginPage = () => {
             <label>Tên đăng nhập</label>
             <input
               type="text"
-              className="form-control" // Thêm class cho đẹp giống file CSS
+              className="form-control"
               placeholder="Nhập tên đăng nhập..."
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
 
-          {/* --- PHẦN MẬT KHẨU CÓ CON MẮT --- */}
           <div className="form-group">
             <label>Mật khẩu</label>
             <div className="input-with-icon">
               <input
-                type={showPassword ? "text" : "password"} // Đổi type dựa theo state
+                type={showPassword ? "text" : "password"}
                 className="form-control"
                 placeholder="Nhập mật khẩu..."
                 value={password}
@@ -146,6 +152,7 @@ const LoginPage = () => {
               <span
                 className="toggle-password"
                 onClick={() => setShowPassword(!showPassword)}
+                style={{ cursor: "pointer" }}
               >
                 {showPassword ? <EyeOffIcon /> : <EyeIcon />}
               </span>
