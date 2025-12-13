@@ -26,15 +26,17 @@ import ProtectedRoute from "./ProtectedRoute";
 
 // --- CÁC TRANG ADMIN ---
 //@ts-ignore
-import ListProducts_SP_Admin from "./ListProducts_SP_Admin";
+import AdminDashboard from "./AdminDashboard"; // Trang chủ Admin
 //@ts-ignore
-import AdminEditProduct from "./AdminEditProduct";
+import ListProducts_SP_Admin from "./ListProducts_SP_Admin"; // Quản lý Sản phẩm
+//@ts-ignore
+import AdminEditProduct from "./AdminEditProduct"; // Thêm/Sửa Sản phẩm
 // @ts-ignore
-import UserManagement from "./UserManagement";
+import UserManagement from "./UserManagement"; // Quản lý User
 // @ts-ignore
-import AdminDashboard from "./AdminDashboard";
+import AdminEditUser from "./AdminEditUser"; // Sửa User
 // @ts-ignore
-import AdminEditUser from "./AdminEditUser"; // ✅ MỚI: Import trang sửa user
+import OrderManagement from "./OrderManagement"; // ✅ MỚI: Quản lý Đơn hàng
 
 import ChatPage from "./ChatPage";
 import { CartProvider } from "./CartContext";
@@ -101,12 +103,22 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-            {/* ✅ MỚI: Sửa Người dùng */}
+            {/* Sửa Người dùng */}
             <Route
               path="admin/user/edit/:id"
               element={
                 <ProtectedRoute>
                   <AdminEditUser />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* ✅ 4. Quản lý Đơn hàng (MỚI) */}
+            <Route
+              path="admin/orders"
+              element={
+                <ProtectedRoute>
+                  <OrderManagement />
                 </ProtectedRoute>
               }
             />
