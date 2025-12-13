@@ -25,8 +25,6 @@ const Trang1 = () => {
         const { data, error } = await supabase
           .from("products")
           .select("*")
-          // ⚠️ QUAN TRỌNG: Chỉ lấy sản phẩm có category là 'accessories'
-          // Bạn nhớ vào Database sửa cột category của sạc, ốp lưng thành 'accessories' nhé
           .eq("category", "accessories");
 
         if (error) throw error;

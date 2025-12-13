@@ -43,7 +43,7 @@ const Layout = () => {
           <Link to="/">Trang chủ</Link>
           <Link to="/trang1">Phụ Kiện</Link>
           {user?.role === "admin" && <Link to="/admin/products">Quản trị</Link>}
-          <Link to="/trang2">Trang Nhân Viên</Link>
+          <Link to="/trang2">Nhân Viên</Link>
           <Link to="/chat">Chat với AI</Link>
 
           {/* --- GIỎ HÀNG --- */}

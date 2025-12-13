@@ -20,14 +20,12 @@ const ProductDetail = () => {
     const fetchProduct = async () => {
       setLoading(true);
       setErrorMsg(null);
-
       try {
         const { data, error } = await supabase
           .from("products")
           .select("*")
           .eq("id", id)
           .single();
-
         if (error) throw error;
         setProduct(data);
       } catch (err) {

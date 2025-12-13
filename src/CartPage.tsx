@@ -2,11 +2,6 @@
 import React from "react";
 import { useCart } from "./CartContext";
 import { useNavigate } from "react-router-dom";
-// ⚠️ QUAN TRỌNG: Bạn cần import supabaseClient và định nghĩa getImageUrl
-// Tôi giả định bạn có thể lấy BASE_URL từ CartContext hoặc bạn cần định nghĩa nó ở đây.
-
-// --- HÀM XỬ LÝ ẢNH TỪ SUPABASE (Bạn cần thêm đoạn này) ---
-// Thay thế URL này bằng BASE_URL chính xác của Supabase Storage của bạn.
 const BASE_URL =
   "https://gietauwhxqhqfhuhleto.supabase.co/storage/v1/object/public/img";
 
@@ -17,7 +12,6 @@ const getImageUrl = (imagePath: string) => {
 
   return `${BASE_URL}/${imagePath}`;
 };
-// ------------------------------------------------------------------
 
 export default function CartPage() {
   const {

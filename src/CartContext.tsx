@@ -75,7 +75,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         .filter((item) => item.quantity > 0)
     );
   };
-
   const clearCart = () => setCartItems([]);
 
   const totalPrice = cartItems.reduce(
