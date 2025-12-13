@@ -1,26 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "./supabaseClient";
-import { useCart } from "./CartContext"; // ✅ 1. Import lại Context giỏ hàng
+import { useCart } from "./CartContext";
 
 const ListProducts_SP = () => {
   const [listProduct, setListProduct] = useState([]);
   const navigate = useNavigate();
-
-  // ✅ 2. Lấy hàm addToCart
   const { addToCart } = useCart();
-
-  // ✅ 3. Hàm xử lý ảnh thông minh (Quan trọng)
   const getImageUrl = (imagePath) => {
-    // Nếu dữ liệu trống -> Trả về ảnh rỗng
     if (!imagePath) return "https://placehold.co/600x400?text=No+Image";
-
-    // Nếu dữ liệu là link online (bắt đầu bằng http) -> Giữ nguyên
     if (imagePath.startsWith("http")) return imagePath;
-
-    // Nếu chỉ là tên file -> Ghép với link Supabase
-    // ⚠️ LƯU Ý: Kiểm tra kỹ tên bucket trong Storage của bạn là 'img' hay 'products'
-    // Ở đây tôi để là 'products' theo thói quen, nếu bucket bạn tên là 'img' thì sửa lại nhé.
     const BASE_URL =
       "https://gietauwhxqhqfhuhleto.supabase.co/storage/v1/object/public/img";
     return `${BASE_URL}/${imagePath}`;
@@ -33,7 +22,6 @@ const ListProducts_SP = () => {
           .from("products")
           .select("*")
           .order("id", { ascending: true });
-
         if (error) throw error;
         setListProduct(data);
       } catch (err) {
@@ -74,7 +62,7 @@ const ListProducts_SP = () => {
               background: "#fff",
               boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
               transition: "transform 0.2s ease",
-              display: "flex", // Flex để căn chỉnh nút xuống đáy
+              display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
             }}
@@ -101,7 +89,6 @@ const ListProducts_SP = () => {
                 }}
               >
                 <img
-                  // ✅ Gọi hàm getImageUrl thay vì nối chuỗi cứng
                   src={getImageUrl(p.image)}
                   alt={p.name || p.title}
                   style={{

@@ -157,7 +157,12 @@ export default function CartPage() {
               ${totalPrice.toFixed(2)}
             </span>
           </h3>
-          <button style={styles.primaryButton}>Thanh toán ngay</button>
+          <button
+            onClick={() => navigate("/checkout")} // ✅ Thêm dòng này để chuyển sang trang Thanh toán
+            style={styles.primaryButton}
+          >
+            Thanh toán ngay
+          </button>
         </div>
       </div>
     </div>

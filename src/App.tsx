@@ -32,6 +32,8 @@ import AdminEditProduct from "./AdminEditProduct";
 import ChatPage from "./ChatPage";
 import { CartProvider } from "./CartContext";
 import CartPage from "./CartPage";
+// @ts-ignore
+import CheckoutPage from "./CheckoutPage";
 
 const App = () => {
   return (
@@ -46,6 +48,7 @@ const App = () => {
             <Route path="trang2" element={<Trang2 />} />
             <Route path="sanpham/:id" element={<Chitietsanpham />} />
             <Route path="detail/:id" element={<ProductDetail />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="logout" element={<LogoutPage />} />
             <Route path="/register" element={<RegisterPage />} />
