@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const ListProduct = () => {
   const [listproduct, setListProduct] = useState([]);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
