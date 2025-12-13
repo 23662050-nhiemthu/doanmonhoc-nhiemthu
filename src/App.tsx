@@ -1,6 +1,5 @@
 import "./styles.css";
-// @ts-ignore
-import Home from "./Home";
+
 // @ts-ignore
 import Layout from "./Layout";
 // @ts-ignore
@@ -9,8 +8,6 @@ import Trang1 from "./Trang1";
 import Chitietsanpham from "./Chitietsanpham";
 // @ts-ignore
 import Trang2 from "./Trang2";
-// @ts-ignore
-import ListProducts from "./ListProducts";
 // @ts-ignore
 import ProductDetail from "./ProductDetail";
 // @ts-ignore
