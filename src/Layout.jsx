@@ -145,7 +145,7 @@ const Layout = () => {
       <footer className="modern-footer">
         <div className="footer-container">
           <div className="footer-column">
-            <h3>Hệ thống CellphoneS (Fake)</h3>
+            <h3>Hệ thống CellphoneS</h3>
             <p>📍 Địa chỉ: 33 Vĩnh Viễn, TP.HCM</p>
           </div>
           <div className="footer-column map-column">{/* Map giữ nguyên */}</div>

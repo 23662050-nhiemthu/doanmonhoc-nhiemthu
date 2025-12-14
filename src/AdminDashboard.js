@@ -23,9 +23,7 @@ const AdminDashboard = () => {
         <h2 style={{ color: "#333", fontWeight: "bold" }}>
           👋 Xin chào Quản trị viên!
         </h2>
-        <p className="text-muted">
-          Hệ thống quản lý cửa hàng CellphoneS (Fake)
-        </p>
+        <p className="text-muted">Hệ thống quản lý cửa hàng CellphoneS</p>
       </div>
       <div className="row justify-content-center">
         {/* Ô 1: Quản lý Sản phẩm */}
