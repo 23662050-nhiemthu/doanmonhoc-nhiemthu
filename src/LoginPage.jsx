@@ -69,9 +69,6 @@ const LoginPage = () => {
       localStorage.setItem("user_token", JSON.stringify(userInfo));
 
       alert(`✅ Đăng nhập thành công! Xin chào ${userData.fullname}`);
-
-      // ✅ SỬA Ở ĐÂY: Dùng window.location.href CHO CẢ 2 TRƯỜNG HỢP
-      // Điều này bắt buộc trình duyệt tải lại trang -> Header sẽ cập nhật tên ngay lập tức
       if (role === "admin") {
         window.location.href = "/admin/dashboard";
       } else {
